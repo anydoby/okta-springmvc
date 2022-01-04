@@ -1,28 +1,17 @@
 package com.okta.developer.search.security;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
-public class SecurityConfiguration {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public SecurityWebFilterChain configure(ServerHttpSecurity http) {
-
-        http
-            .authorizeExchange((exchanges) ->
-                exchanges
-                    .anyExchange().authenticated()
-            )
-            .oauth2Login(withDefaults())
-            .exceptionHandling()
-            .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/oauth2/authorization/okta"));
-        return http.build();
-
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+        .authorizeRequests()
+        .anyRequest().authenticated()
+        .and().oauth2Login();
     }
 }
